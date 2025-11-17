@@ -9,28 +9,21 @@ use TeamVortexSoftware\VortexSDK\VortexClient;
 // Start session
 session_start();
 
-// Demo users
+// Demo users (simplified structure)
 $demoUsers = [
     [
-        'id' => 'user-1',
-        'email' => 'alice@example.com',
+        'id' => 'admin-user-123',
+        'email' => 'admin@example.com',
         'password' => 'password123',
         'name' => 'Alice Johnson',
-        'role' => 'admin',
-        'groups' => [
-            ['type' => 'workspace', 'id' => 'ws-1', 'name' => 'Main Workspace'],
-            ['type' => 'team', 'id' => 'team-1', 'name' => 'Engineering']
-        ]
+        'is_auto_join_admin' => true
     ],
     [
-        'id' => 'user-2',
-        'email' => 'bob@example.com',
-        'password' => 'password123',
+        'id' => 'user-user-456',
+        'email' => 'user@example.com',
+        'password' => 'userpass',
         'name' => 'Bob Smith',
-        'role' => 'member',
-        'groups' => [
-            ['type' => 'workspace', 'id' => 'ws-1', 'name' => 'Main Workspace']
-        ]
+        'is_auto_join_admin' => false
     ]
 ];
 
@@ -123,15 +116,23 @@ function handleGenerateJWT($vortex, $users) {
         return;
     }
 
-    $user = $_SESSION['user'];
+    $sessionUser = $_SESSION['user'];
 
     try {
-        $jwt = $vortex->generateJwt(
-            $user['id'],
-            [['type' => 'email', 'value' => $user['email']]],
-            $user['groups'],
-            $user['role']
-        );
+        // Build admin scopes
+        $adminScopes = [];
+        if ($sessionUser['is_auto_join_admin']) {
+            $adminScopes[] = 'autoJoin';
+        }
+
+        // Create user array
+        $user = [
+            'id' => $sessionUser['id'],
+            'email' => $sessionUser['email'],
+            'adminScopes' => $adminScopes
+        ];
+
+        $jwt = $vortex->generateJwt($user);
 
         echo json_encode(['jwt' => $jwt]);
     } catch (Exception $e) {
@@ -205,7 +206,7 @@ function serveHTML() {
         <h2>🔐 Login</h2>
         <div class="form-group">
             <label>Email:</label>
-            <input type="email" id="login-email" value="alice@example.com">
+            <input type="email" id="login-email" value="admin@example.com">
         </div>
         <div class="form-group">
             <label>Password:</label>
@@ -214,6 +215,11 @@ function serveHTML() {
         <button onclick="login()">Login</button>
         <button onclick="getDemoUsers()">Show Demo Users</button>
         <div id="login-result" class="result"></div>
+        <div class="demo-users-info">
+            <h4>Demo Users:</h4>
+            <p><strong>admin@example.com</strong> / password123 (auto-join admin)</p>
+            <p><strong>user@example.com</strong> / userpass (regular user)</p>
+        </div>
     </div>
 
     <div id="jwt-section" class="section" style="display:none;">

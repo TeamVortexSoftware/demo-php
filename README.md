@@ -37,12 +37,44 @@ A demo application showcasing the Vortex PHP SDK integration.
 
 ## Demo Users
 
-The demo includes two pre-configured users:
+The demo includes two pre-configured users with the new simplified structure:
 
-| Email | Password | Role | Groups |
-|-------|----------|------|--------|
-| alice@example.com | password123 | admin | Main Workspace, Engineering Team |
-| bob@example.com | password123 | member | Main Workspace |
+| Email | Password | Auto-Join Admin |
+|-------|----------|-----------------|
+| admin@example.com | password123 | Yes |
+| user@example.com | userpass | No |
+
+## JWT Format
+
+This demo uses Vortex's **new JWT format with user array**:
+
+```php
+// Create a user array with admin scopes
+$user = [
+    'id' => 'user-123',
+    'email' => 'user@example.com',
+    'adminScopes' => ['autoJoin']  // Optional: grants admin privileges
+];
+
+// Generate JWT
+$jwt = $vortex->generateJwt($user);
+
+// Or with extra properties
+$jwt = $vortex->generateJwt($user, [
+    'role' => 'admin',
+    'department' => 'Engineering'
+]);
+```
+
+The JWT payload includes:
+- `userId`: User's unique ID
+- `userEmail`: User's email address
+- `userIsAutoJoinAdmin`: Set to `true` when `adminScopes` contains `'autoJoin'`
+- Any additional properties from the second parameter
+
+This replaces the legacy format with identifiers, groups, and role fields.
+
+The demo automatically uses the new format when generating JWTs for authenticated users (see `handleGenerateJWT()` in `public/index.php`).
 
 ## API Endpoints
 
