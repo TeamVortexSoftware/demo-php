@@ -19,16 +19,19 @@ A demo application showcasing the Vortex PHP SDK integration.
 ## Running the Demo
 
 1. Navigate to the demo directory:
+
    ```bash
    cd apps/demo-php
    ```
 
 2. Set your Vortex API key (optional - defaults to demo key):
+
    ```bash
    export VORTEX_API_KEY=your-api-key-here
    ```
 
 3. Run the PHP built-in server:
+
    ```bash
    php -S localhost:8000 -t public
    ```
@@ -39,10 +42,10 @@ A demo application showcasing the Vortex PHP SDK integration.
 
 The demo includes two pre-configured users with the new simplified structure:
 
-| Email | Password | Auto-Join Admin |
-|-------|----------|-----------------|
-| admin@example.com | password123 | Yes |
-| user@example.com | userpass | No |
+| Email             | Password    | Autojoin Admin |
+| ----------------- | ----------- | --------------- |
+| admin@example.com | password123 | Yes             |
+| user@example.com  | userpass    | No              |
 
 ## JWT Format
 
@@ -53,7 +56,7 @@ This demo uses Vortex's **new JWT format with user array**:
 $user = [
     'id' => 'user-123',
     'email' => 'user@example.com',
-    'adminScopes' => ['autoJoin']  // Optional: grants admin privileges
+    'adminScopes' => ['autojoin']  // Optional: grants admin privileges
 ];
 
 // Generate JWT
@@ -67,9 +70,10 @@ $jwt = $vortex->generateJwt($user, [
 ```
 
 The JWT payload includes:
+
 - `userId`: User's unique ID
 - `userEmail`: User's email address
-- `userIsAutoJoinAdmin`: Set to `true` when `adminScopes` contains `'autoJoin'`
+- `userIsAutojoinAdmin`: Set to `true` when `adminScopes` contains `'autojoin'`
 - Any additional properties from the second parameter
 
 This replaces the legacy format with identifiers, groups, and role fields.

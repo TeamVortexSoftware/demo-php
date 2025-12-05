@@ -16,14 +16,14 @@ $demoUsers = [
         'email' => 'admin@example.com',
         'password' => 'password123',
         'name' => 'Alice Johnson',
-        'is_auto_join_admin' => true
+        'is_autojoin_admin' => true
     ],
     [
         'id' => 'user-user-456',
         'email' => 'user@example.com',
         'password' => 'userpass',
         'name' => 'Bob Smith',
-        'is_auto_join_admin' => false
+        'is_autojoin_admin' => false
     ]
 ];
 
@@ -121,8 +121,8 @@ function handleGenerateJWT($vortex, $users) {
     try {
         // Build admin scopes
         $adminScopes = [];
-        if ($sessionUser['is_auto_join_admin']) {
-            $adminScopes[] = 'autoJoin';
+        if ($sessionUser['is_autojoin_admin']) {
+            $adminScopes[] = 'autojoin';
         }
 
         // Create user array
@@ -217,7 +217,7 @@ function serveHTML() {
         <div id="login-result" class="result"></div>
         <div class="demo-users-info">
             <h4>Demo Users:</h4>
-            <p><strong>admin@example.com</strong> / password123 (auto-join admin)</p>
+            <p><strong>admin@example.com</strong> / password123 (autojoin admin)</p>
             <p><strong>user@example.com</strong> / userpass (regular user)</p>
         </div>
     </div>
